@@ -35,7 +35,7 @@ local abilities = {
 	
 ["Living Bomb"] = function()
 		if ni.spell.available(livingbomb)
-		and ni.unit.debuffremaining("target", "44461", "player") <3 then
+		and ni.unit.debuffremaining("target", "44461", "player") <= 2 then
 			ni.spell.cast(livingbomb, "target")
 			return true
 		end

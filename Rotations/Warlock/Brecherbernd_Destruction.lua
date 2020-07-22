@@ -32,9 +32,9 @@ local abilities = {
 
 ["Immolate"] = function()
 		if ni.spell.available(Immolate)
-		and ni.unit.debuffremaining("target", "Immolate", "player") <2
-		then ni.spell.cast(Immolate, "target")
-		return true
+		and ni.unit.debuffremaining("target", "Immolate", "player") <2 then
+			ni.spell.cast(Immolate, "target")
+			return true
 		end
 	end,
 
