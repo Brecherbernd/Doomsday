@@ -2,6 +2,7 @@ local queue = {
   "Arcane Brilliance",
   "Ice Floes",
   "Rune of Power",
+  "Mirror Image",
 	"Living Bomb",
 	"Arcane Missiles",
 	"Arcane Barrage",
@@ -15,6 +16,7 @@ local arcanemissiles = GetSpellInfo(5143)
 local arcanebarrage = GetSpellInfo(44425)
 local arcaneblast = GetSpellInfo(30451)
 local icefloes = GetSpellInfo(108839)
+local mirrorimage = GetSpellInfo(55342)
 local lastcast = 0
 
 local abilities = {
@@ -47,7 +49,15 @@ local abilities = {
 			return true;
 		end
 	end,
-	
+
+["Mirror Image"] = function()
+    if ni.spell.available(mirrorimage) 
+      and not ni.unit.ischanneling("player") then
+		   ni.spell.cast(mirrorimage, "target")
+		   return true
+	   end
+   end,	  
+
 ["Living Bomb"] = function()
 		if ni.spell.available(livingbomb)
 		and ni.unit.debuffremaining("target", "44461", "player") <= 2 then
