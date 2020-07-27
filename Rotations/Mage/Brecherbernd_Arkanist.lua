@@ -1,5 +1,6 @@
 local queue = {
-	"Arcane Brilliance",
+  "Arcane Brilliance",
+  "Ice Floes",
   "Rune of Power",
 	"Living Bomb",
 	"Arcane Missiles",
@@ -10,25 +11,36 @@ local queue = {
 local runeofpower = GetSpellInfo(116011)
 local arcanebrilliance = GetSpellInfo(1459)
 local livingbomb = GetSpellInfo(44457)
-local arcanemissiles = GetSpellInfo(5143);
-local arcanebarrage = GetSpellInfo(44425);
-local arcaneblast = GetSpellInfo(30451);
+local arcanemissiles = GetSpellInfo(5143)
+local arcanebarrage = GetSpellInfo(44425)
+local arcaneblast = GetSpellInfo(30451)
+local icefloes = GetSpellInfo(108839)
 local lastcast = 0
 
 local abilities = {
 ["Arcane Brilliance"] = function()
 		if ni.spell.available(arcanebrilliance) then
-			local how = ni.player.buffremaining(arcanebrilliance);
+			local how = ni.player.buffremaining(arcanebrilliance)
 			if how <= 1 then
-				ni.spell.cast(arcanebrilliance);
+				ni.spell.cast(arcanebrilliance)
 				return true;
 			end
 		end
 	end,	
-
+ 
+["Ice Floes"] = function()
+		if ni.spell.available(icefloes)
+      and ni.unit.ismoving("player") 
+      and not ni.unit.buff("player", 108839, "player") then
+			ni.spell.cast(icefloes, "player")
+			return true;
+		end
+	end,	
+  
 ["Rune of Power"] = function()
       if ni.spell.available(runeofpower)
       and not ni.unit.buff("player", 116014, "player") 
+      and not ni.unit.ismoving("player")
       and GetTime() - lastcast > 4
 			then lastcast = GetTime()
 			ni.spell.castat(runeofpower, "player")
@@ -62,7 +74,8 @@ local abilities = {
 			return true
 		end
 	end,
-	
+-- T16 Bonus needs to be implemented  
+
 ["Arcane Blast"] = function()
     if ni.spell.available(arcaneblast) 
       and not ni.unit.ischanneling("player") then
