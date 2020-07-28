@@ -1,6 +1,6 @@
 # Doomsday
 
-On holiday till 10.08.2020, so developement ist slow downed. 
+On holiday till 10.08.2020, so developement is slow downed. 
 Afterwards focus on Arkanist to complete it.
 
 Mage:
