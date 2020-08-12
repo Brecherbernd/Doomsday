@@ -1,7 +1,6 @@
 # Doomsday
 
-On holiday till 10.08.2020, so developement is slow downed. 
-Afterwards focus on Arkanist to complete it.
+Cant focus on the rotations for a time, will come back in the future.
 
 Mage:
 Arkanist in Alpha release
