@@ -144,13 +144,6 @@ local abilities = {
 		   return true
 	   end
    end,	
-	
-["Window"] = function()
-		if not popup_shown then
-		 ni.debug.popup("Arkanist by Brecherbernd", 
-		 "Welcome to the Arkanist, this profile is still in developement! \nWrite me in discord if you have any suggestions!\n\nSuggested Talents: 313222\n\n\nCredits to DarhangeR, Nemo, Bulletin and Scott")	
-		popup_shown = true;
-		end 
-	end,
+
 };
 ni.bootstrap.rotation("Brecherbernd_Arkanist", queue, abilities)
