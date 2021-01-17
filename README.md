@@ -6,9 +6,11 @@ Mage:
 
 Arkanist: Rewriten, Single Target only, AoE will come in the near future.
 
+
 Warlock:
 
 Rotations are pre Alpha, The Suffering is the most developed one, but still many issues.
+
 
 Hunter:
 
