@@ -11,6 +11,9 @@ local arcanebarrage = GetSpellInfo(44425)
 local arcaneblast = GetSpellInfo(30451)
 local icefloes = GetSpellInfo(108839)
 local mirrorimage = GetSpellInfo(55342)
+local arcanepower = GetSpellInfo(12042)
+local altertime = GetSpellInfo(108978)
+local arcaneexplosion = GetSpellInfo(1449)
 local lastcast = 0
 
 local items = {
@@ -62,7 +65,7 @@ end
 local function OnUnLoad()  
 	ni.GUI.DestroyFrame("Brecherbernd_Arkanist");
 end	
- 
+
 local queue = {
     "Arcane Brilliance",
 	"Arcane Intellect",
@@ -73,16 +76,19 @@ local queue = {
 	"Pause",
 	"Auto Target",
   	"Ice Floes",
-  	"Rune of Power",
+	"Rune of Power",
+	"Arcane Power",
+	"Alter Time",
   	"Mirror Image",
 	"Living Bomb",
+	"Arcane Explosion",
 	"Arcane Missiles",
 	"Arcane Barrage",
 	"Arcane Blast"
 };
  
 local abilities = {
--------------------------------------------------------
+
 ["Arcane Intellect"] = function()
 local _, enabled = GetSetting("arcaneintellect")
         if enabled
@@ -92,7 +98,7 @@ local _, enabled = GetSetting("arcaneintellect")
                 return true;
 			end
 		end, 		
-------------------------------------------------------------
+
 ["Conjure Mana Gem"] = function()
 local _, enabled = GetSetting("ConjureManaGem")
 		 if enabled
@@ -104,7 +110,7 @@ local _, enabled = GetSetting("ConjureManaGem")
 			return true;	
 		end 
 	end,	
---------------------------------------------------------
+
 ["Mana Gem"] = function()
 local value, enabled = GetSetting("managem")
 		 if enabled
@@ -114,8 +120,7 @@ local value, enabled = GetSetting("managem")
 			return true;	
 		end 
 	end,	
-	
--------------------------------------------------------
+
 ["Frost Armor"] = function()
 local _, enabled = GetSetting("frostarmor")
         if enabled
@@ -125,8 +130,7 @@ local _, enabled = GetSetting("frostarmor")
 				return true;
 		end
 	end, 
-	
--------------------------------------------------------
+
 ["Mage Armor"] = function()
 local _, enabled = GetSetting("magearmor")
 		if enabled
@@ -159,8 +163,8 @@ local _, enabled = GetSetting("magearmor")
 			ni.player.runtext("/targetenemy")
 		end
 	end,
-	["Ice Floes"] = function()
-		if ni.spell.available(icefloes)
+["Ice Floes"] = function()
+	if ni.spell.available(icefloes)
       and ni.unit.ismoving("player") 
       and not ni.unit.buff("player", 108839, "player") then
 			ni.spell.cast(icefloes, "player")
@@ -176,6 +180,26 @@ local _, enabled = GetSetting("magearmor")
 			then lastcast = GetTime()
 			ni.spell.castat(runeofpower, "player")
 			return true;
+		end
+	end,
+
+["Arcane Power"] = function()
+    if ni.unit.debuffstacks("player", 114664) == 4
+		and ni.spell.available(arcanepower)
+		and not ni.unit.ismoving("player") then
+			  ni.spell.cast(arcanepower)
+			  return true;
+		end
+	end,
+
+["Alter Time"] = function()
+    if ni.unit.debuffstacks("player", 114664) == 4
+		and ni.spell.available(altertime)
+		and not ni.unit.ismoving("player")
+		and GetTime() - lastcast > 8
+		then lastcast = GetTime()
+			  ni.spell.cast(altertime)
+			  return true;
 		end
 	end,
 
@@ -196,8 +220,7 @@ local _, enabled = GetSetting("magearmor")
 	end,
 	
 ["Arcane Missiles"] = function()
-	local arcanecharge, _, _, arcanecharge_stacks = ni.player.debuff(114664)
-		if arcanecharge_stacks == 4
+    if ni.unit.debuffstacks("player", 114664) == 4
       and ni.unit.buff("player", "79683") 
       and not ni.unit.ischanneling("player") then
 			ni.spell.cast(arcanemissiles, "target")
@@ -206,9 +229,9 @@ local _, enabled = GetSetting("magearmor")
 	end,
 
 ["Arcane Barrage"] = function()
-	local arcanecharge, _, _, arcanecharge_stacks = ni.player.debuff(114664)
-    if arcanecharge_stacks == 4 
-    and not ni.unit.ischanneling("player") then
+	if ni.unit.debuffstacks("player", 114664) == 4
+	and not ni.unit.buff("player", 110909)
+	and not ni.unit.ischanneling("player") then
 			ni.spell.cast(arcanebarrage, "target")
 			return true
 		end
