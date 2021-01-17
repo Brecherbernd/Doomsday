@@ -1,12 +1,12 @@
 # Doomsday
 
-Cant focus on the rotations for a time, will come back in the future.
+Started to rewrite the rotations. 01/17/21
 
 Mage:
-Arkanist in Alpha release
+Arkanist: Rewriten, Single Target only, AoE will come in the near future.
 
 Warlock:
 Rotations are pre Alpha, The Suffering is the most developed one, but still many issues.
 
-Rouge:
-Not playable at the moment.
+Hunter:
+BearKills: Singletarget only, AoE will come in the future.
