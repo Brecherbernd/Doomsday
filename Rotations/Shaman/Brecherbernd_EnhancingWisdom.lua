@@ -1,3 +1,5 @@
+---- Searing Totem + Recall does not work, need more supervison, for leveling not needed. will review when time or max. levl
+
 local lightningbolt = GetSpellInfo(403)
 local primalstrike = GetSpellInfo(73899)
 local earthshock = GetSpellInfo(8042)
@@ -8,6 +10,8 @@ local windfury = GetSpellInfo(8232)
 local flameshock = GetSpellInfo(8050)
 local healingsurge = GetSpellInfo(8004)
 local ghostwolf = GetSpellInfo(2645)
+local searingtotem = GetSpellInfo(3599)
+local totemicrecall = GetSpellInfo(36936)
 local lastcast = 0
 
 local items = {
@@ -60,10 +64,31 @@ local function OnUnLoad()
 	ni.GUI.DestroyFrame("Brecherbernd_EnhancingWisdom");
 end	
 
+--GetTotemInfo thx to HBNUK
+local fireSlot, earthSlot, waterSlot, airSlot = 1, 2, 3, 4;
+local function HasTotem(slot, name)
+	local haveTotem, totemName = GetTotemInfo(slot)
+	if haveTotem and totemName == name then
+		return true
+	end
+	if haveTotem and totemName == nil then
+		return true
+	end
+	return false
+end
+local function TotemTimeRemaining(slot, name)
+	if not HasTotem(slot, name) then
+		return 0
+	end
+	local _, _, startTime, duration = GetTotemInfo(slot)
+	return startTime + duration - GetTime()
+end
+
 local queue ={
 	"Enchant Weapon",
 	"Lightning Shield",
 	"Healing Surge",
+	"Totemic Recall",
 	"Ghost Wolf",
 	"Pause",
 	"Auto Target",
@@ -95,7 +120,7 @@ local abilities = {
 		 and UnitIsDeadOrGhost("target")
 		 and not UnitCanAttack("player", "target")) 
 		 or not ni.unit.exists("target")) then
-			AttackTarget();
+			AttackTarget("Target");
 		end
 	end,
 
@@ -103,21 +128,34 @@ local abilities = {
 		local value, enabled = GetSetting("Healing Surge")
 				 if enabled
 				 and ni.unit.hp("player") <= value 
-				 and GetTime() - lastcast > 2
+				 and GetTime() - lastcast > 4
 				 then lastcast = GetTime()
 					ni.spell.cast(healingsurge)
 					return true;	
 				end 
 			end,	
 
+["Totemic Recall"] = function()
+local affectingCombat = UnitAffectingCombat("player");  
+			 if HasTotem(fireSlot)
+			 or HasTotem(waterSlot)
+			 or HasTotem(earthSlot)
+			 or HasTotem(airSlot)
+			 and not affectingCombat
+			 and ni.spell.available(totemicrecall) then
+				ni.spell.cast(totemicrecall)
+				return true
+			end
+		end,
+
 ["Ghost Wolf"] = function()
 		local affectingCombat = UnitAffectingCombat("player");    
 		local value, enabled = GetSetting("ghostwolf")
-				if enabled
-				and not affectingCombat
-				and not ni.unit.ismounted("player")
-				and ni.player.movingfor(value * 15)
-				and not ni.player.buff(ghostwolf) then
+				 if enabled
+				 and not affectingCombat
+				 and not ni.unit.ismounted("player")
+				 and ni.player.movingfor(value * 15)
+				 and not ni.player.buff(ghostwolf) then
 					ni.spell.cast(ghostwolf)
 					return true;    
 				end 
@@ -126,8 +164,8 @@ local abilities = {
 ["Enchant Weapon"] = function()
 		local mh, _, _, oh = GetWeaponEnchantInfo()
 		if mh == nil 
-		 and ni.spell.available(flametounge) then
-			ni.spell.cast(flametounge)
+		 and ni.spell.available(windfury) then
+			ni.spell.cast(windfury)
 			return true
 		end
 		if oh == nil
@@ -143,8 +181,16 @@ local abilities = {
 		then ni.spell.cast(lightningshield, "player")
             return true
          end
-    end,
+	end,
+	
+["Searing Totem"] = function()
+		if not HasTotem(fireSlot)
+		and ni.spell.available(spells.searingtotem.id) then
+		ni.spell.cast(spells.searingtotem.name)
+		end
+	end,
 
+--- Stormstrike and Primal take the same id, so this works for leveling aswell
 ["Primal Strike"] = function()
 		if ni.spell.available(primalstrike)
 		and ni.spell.valid("target", primalstrike)
