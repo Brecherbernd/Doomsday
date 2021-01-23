@@ -92,6 +92,7 @@ local queue ={
 	"Ghost Wolf",
 	"Pause",
 	"Auto Target",
+	"Searing Totem",
 	"Primal Strike",
 	"Flame Shock",
 	"Lava Lash",
@@ -137,10 +138,7 @@ local abilities = {
 
 ["Totemic Recall"] = function()
 local affectingCombat = UnitAffectingCombat("player");  
-			 if HasTotem(fireSlot)
-			 or HasTotem(waterSlot)
-			 or HasTotem(earthSlot)
-			 or HasTotem(airSlot)
+			 if TotemTimeRemaining(1, searingtotem) > 3
 			 and not affectingCombat
 			 and ni.spell.available(totemicrecall) then
 				ni.spell.cast(totemicrecall)
@@ -184,9 +182,11 @@ local affectingCombat = UnitAffectingCombat("player");
 	end,
 	
 ["Searing Totem"] = function()
-		if not HasTotem(fireSlot)
-		and ni.spell.available(spells.searingtotem.id) then
-		ni.spell.cast(spells.searingtotem.name)
+local affectingCombat = UnitAffectingCombat("player");  
+		if TotemTimeRemaining(1, searingtotem) < 5
+		and affectingCombat
+		and ni.spell.available(searingtotem) then
+			ni.spell.cast(searingtotem)
 		end
 	end,
 
