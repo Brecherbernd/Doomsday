@@ -19,4 +19,5 @@ BearKills: Singletarget only, AoE will come in the future.
 
 
 Shaman:
-Began to develop Shaman Rotations, first Enhancement others will come, still in development as im leveling.
+
+Began todevelop Shaman Rotations, first Enhancement others will come, still in development as im leveling.
