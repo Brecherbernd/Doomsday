@@ -12,6 +12,8 @@ local healingsurge = GetSpellInfo(8004)
 local ghostwolf = GetSpellInfo(2645)
 local searingtotem = GetSpellInfo(3599)
 local totemicrecall = GetSpellInfo(36936)
+local feralspirit = GetSpellInfo(51533)
+local elementalmastery = GetSpellInfo(16166)
 local lastcast = 0
 
 local items = {
@@ -21,6 +23,7 @@ local items = {
 	{ type = "page", number = 1, text = "|cffFFFF00Main Settings" },
 	{ type = "separator" },
 	{ type = "entry", text = "\124T"..select(3, GetSpellInfo(403))..":26:26\124t Lightning Bolt", tooltip = "Use Lightning Bolt", enabled = true, key = "lightningbolt" },
+	{ type = "entry", text = "\124T"..select(3, GetSpellInfo(16166))..":26:26\124t Elemental Mastery", tooltip = "Use Elemental Mastery", enabled = true, key = "elementalmastery" },
 	{ type = "entry", text = "\124T"..select(3, GetSpellInfo(2645))..":26:26\124t Ghostwolf", tooltip = "Use Ghostwolf when moving", enabled = true, value = 1.5, key = "ghostwolf" },
 	{ type = "separator" },
 	{ type = "title", text = "Choose your desired Armor PLACEHOLDER" },
@@ -84,6 +87,17 @@ local function TotemTimeRemaining(slot, name)
 	return startTime + duration - GetTime()
 end
 
+local function ActiveEnemies(range)
+	table.wipe(enemies)
+	enemies = ni.player.enemiesinrange(range)
+	for k, v in ipairs(enemies) do
+		if ni.player.threat(v.guid) == -1 then
+			table.remove(enemies, k)
+		end
+	end
+	return #enemies
+end
+
 local queue ={
 	"Enchant Weapon",
 	"Lightning Shield",
@@ -93,11 +107,13 @@ local queue ={
 	"Pause",
 	"Auto Target",
 	"Searing Totem",
+	"Elemental Mastery",
+	"Lightning Bolt",
+	"Feral Spirit",
 	"Primal Strike",
 	"Flame Shock",
 	"Lava Lash",
-	"Earth Shock",
-	"Lightning Bolt"
+	"Earth Shock"
 }
 
 local abilities = {
@@ -129,7 +145,7 @@ local abilities = {
 		local value, enabled = GetSetting("Healing Surge")
 				 if enabled
 				 and ni.unit.hp("player") <= value 
-				 and GetTime() - lastcast > 4
+				 and GetTime() - lastcast > 2
 				 then lastcast = GetTime()
 					ni.spell.cast(healingsurge)
 					return true;	
@@ -140,6 +156,7 @@ local abilities = {
 local affectingCombat = UnitAffectingCombat("player");  
 			 if TotemTimeRemaining(1, searingtotem) > 3
 			 and not affectingCombat
+			 and not ni.unit.ismounted("player")
 			 and ni.spell.available(totemicrecall) then
 				ni.spell.cast(totemicrecall)
 				return true
@@ -199,6 +216,12 @@ local affectingCombat = UnitAffectingCombat("player");
          end
 	end,
 
+["Feral Spirit"] = function()
+		if ni.spell.available(feralspirit)
+		then ni.spell.cast(feralspirit)
+         end
+	end,
+
 ["Flame Shock"] = function()
 		if ni.spell.available(flameshock)
 		and ni.spell.valid("target", flameshock)
@@ -225,13 +248,23 @@ local affectingCombat = UnitAffectingCombat("player");
     end,
 
 ["Lightning Bolt"] = function()
-	local value, enabled = GetSetting("Lightning Bolt")
+	local value, enabled = GetSetting("lightningbolt")
 		if enabled
 		and ni.spell.available(lightningbolt)
+		and ni.unit.buffstacks("player", 53817) == 5
             then ni.spell.cast(lightningbolt, "target")
             return true
         end
-    end,
+	end,
+	
+["Elemental Mastery"] = function()
+		local value, enabled = GetSetting("elementalmastery")
+			if enabled
+			and ni.spell.available(elementalmastery)
+				then ni.spell.cast(elementalmastery)
+				return true
+			end
+		end,
 }
 
 ni.bootstrap.profile("Brecherbernd_EnhancingWisdom", queue, abilities, OnLoad, OnUnLoad);	
