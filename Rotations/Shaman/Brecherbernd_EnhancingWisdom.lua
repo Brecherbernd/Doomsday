@@ -14,6 +14,7 @@ local feralspirit = GetSpellInfo(51533)
 local elementalmastery = GetSpellInfo(16166)
 local firenova = GetSpellInfo(1535)
 local chainlightning = GetSpellInfo(421)
+local unleashelements = GetSpellInfo(73680)
 local lastcast = 0
 
 local items = {
@@ -98,13 +99,14 @@ local queue ={
 	"Searing Totem",
 	"Elemental Mastery",
 	"Auto Attack",
-	"Fire Nova",
 	"Chain Lightning",
 	"Lightning Bolt",
 	"Feral Spirit",
 	"Primal Strike",
 	"Flame Shock",
 	"Lava Lash",
+	"Fire Nova",
+	"Unleash Elements",
 	"Earth Shock"
 }
 
@@ -233,6 +235,7 @@ end,
 		if ni.spell.available(flameshock)
 		and ni.spell.valid("target", flameshock)
 		and not ni.unit.debuff("target", 8050)
+		or ni.unit.buff("player", 73683)
             then ni.spell.cast(flameshock, "target")
             return true
          end
@@ -245,6 +248,14 @@ end,
             return true
          end
 	end,
+	
+["Unleash Elements"] = function()
+		if ni.spell.available(unleashelements)
+		and ni.spell.valid("target", unleashelements)
+            then ni.spell.cast(unleashelements, "target")
+            return true
+         end
+	end,	
 	
 ["Earth Shock"] = function()
 		if ni.spell.available(earthshock)
