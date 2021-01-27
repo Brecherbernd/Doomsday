@@ -1,5 +1,3 @@
----- Searing Totem + Recall does not work, need more supervison, for leveling not needed. will review when time or max. levl
-
 local lightningbolt = GetSpellInfo(403)
 local primalstrike = GetSpellInfo(73899)
 local earthshock = GetSpellInfo(8042)
@@ -14,6 +12,8 @@ local searingtotem = GetSpellInfo(3599)
 local totemicrecall = GetSpellInfo(36936)
 local feralspirit = GetSpellInfo(51533)
 local elementalmastery = GetSpellInfo(16166)
+local firenova = GetSpellInfo(1535)
+local chainlightning = GetSpellInfo(421)
 local lastcast = 0
 
 local items = {
@@ -87,17 +87,6 @@ local function TotemTimeRemaining(slot, name)
 	return startTime + duration - GetTime()
 end
 
-local function ActiveEnemies(range)
-	table.wipe(enemies)
-	enemies = ni.player.enemiesinrange(range)
-	for k, v in ipairs(enemies) do
-		if ni.player.threat(v.guid) == -1 then
-			table.remove(enemies, k)
-		end
-	end
-	return #enemies
-end
-
 local queue ={
 	"Enchant Weapon",
 	"Lightning Shield",
@@ -108,6 +97,9 @@ local queue ={
 	"Auto Target",
 	"Searing Totem",
 	"Elemental Mastery",
+	"Auto Attack",
+	"Fire Nova",
+	"Chain Lightning",
 	"Lightning Bolt",
 	"Feral Spirit",
 	"Primal Strike",
@@ -199,7 +191,7 @@ local affectingCombat = UnitAffectingCombat("player");
 	end,
 	
 ["Searing Totem"] = function()
-local affectingCombat = UnitAffectingCombat("player");  
+	local affectingCombat = UnitAffectingCombat("player");  
 		if TotemTimeRemaining(1, searingtotem) < 5
 		and affectingCombat
 		and ni.spell.available(searingtotem) then
@@ -207,6 +199,21 @@ local affectingCombat = UnitAffectingCombat("player");
 		end
 	end,
 
+["Fire Nova"] = function()
+	local bang = ni.unit.enemiesinrange("target", 7)
+		if ni.spell.available(firenova)
+		and ni.unit.debuff("target", 8050)
+		and #bang >= 2
+		then ni.spell.cast(firenova)
+            return true
+        end
+	end,
+
+["Auto Attack"] = function()
+	if not IsCurrentSpell(6603) then
+		ni.spell.cast(6603);
+	end
+end,
 --- Stormstrike and Primal take the same id, so this works for leveling aswell
 ["Primal Strike"] = function()
 		if ni.spell.available(primalstrike)
@@ -248,13 +255,25 @@ local affectingCombat = UnitAffectingCombat("player");
     end,
 
 ["Lightning Bolt"] = function()
+	local blitz = ni.unit.enemiesinrange("target", 7)
 	local value, enabled = GetSetting("lightningbolt")
 		if enabled
 		and ni.spell.available(lightningbolt)
 		and ni.unit.buffstacks("player", 53817) == 5
+		and #blitz <= 2
             then ni.spell.cast(lightningbolt, "target")
             return true
         end
+	end,
+
+["Chain Lightning"] = function()
+	local chainz = ni.unit.enemiesinrange("target", 7)
+		if ni.spell.available(chainlightning)
+		and ni.unit.buffstacks("player", 53817) == 5
+		and #chainz >= 3
+			then ni.spell.cast(chainlightning, "target")
+			return true
+		end
 	end,
 	
 ["Elemental Mastery"] = function()
