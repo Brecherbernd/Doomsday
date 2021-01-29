@@ -2,6 +2,8 @@
 
 Started to rewrite the rotations. 01/17/21
 
+Feel free to add comits to existing rotations. :)
+
 Mage:
 
 Arkanist: Rewriten, Single Target only, AoE will come in the near future.
