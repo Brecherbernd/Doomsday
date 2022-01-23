@@ -135,7 +135,7 @@ local abilities = {
 				 and ni.unit.hp("player") <= value 
 				 and GetTime() - lastcast > 2
 				 then lastcast = GetTime()
-					ni.spell.cast(healingsurge)
+					ni.spell.cast(healingsurge, "player")
 					return true;	
 				end 
 			end,	
