@@ -1,3 +1,4 @@
+--Thank you Scott for making this all possible! Starting to rewrite it and adding more features etc. to make it more viable.
 local lightningbolt = GetSpellInfo(403)
 local primalstrike = GetSpellInfo(73899)
 local earthshock = GetSpellInfo(8042)
@@ -23,15 +24,8 @@ local items = {
 	{ type = "separator" },
 	{ type = "page", number = 1, text = "|cffFFFF00Main Settings" },
 	{ type = "separator" },
-	{ type = "entry", text = "\124T"..select(3, GetSpellInfo(403))..":26:26\124t Lightning Bolt", tooltip = "Use Lightning Bolt", enabled = true, key = "lightningbolt" },
 	{ type = "entry", text = "\124T"..select(3, GetSpellInfo(16166))..":26:26\124t Elemental Mastery", tooltip = "Use Elemental Mastery", enabled = true, key = "elementalmastery" },
 	{ type = "entry", text = "\124T"..select(3, GetSpellInfo(2645))..":26:26\124t Ghostwolf", tooltip = "Use Ghostwolf when moving", enabled = true, value = 1.5, key = "ghostwolf" },
-	{ type = "separator" },
-	{ type = "title", text = "Choose your desired Armor PLACEHOLDER" },
-	{ type = "separator" },
-	{ type = "entry", text = "\124T"..select(3, GetSpellInfo(7302))..":26:26\124t Frost Armor PLACEHOLDER", tooltip = "Frost Armor", enabled = true, key = "frostarmor" },
-	{ type = "entry", text = "\124T"..select(3, GetSpellInfo(6117))..":26:26\124t Mage Armor PLACEHOLDER", tooltip = "Mage Armor", enabled = true, key = "magearmor" },
-	-------------------
 	{ type = "page", number = 2, text = "|cffFFFF00Utility" },
 	{ type = "separator" },
 	{ type = "entry", text = "\124T"..select(3, GetSpellInfo(8004))..":26:26\124t Healing Surge < HP%", tooltip = "Healing Surge", enabled = true, value = 50, key = "Healing Surge" },
@@ -163,7 +157,7 @@ local affectingCombat = UnitAffectingCombat("player");
 				 if enabled
 				 and not affectingCombat
 				 and not ni.unit.ismounted("player")
-				 and ni.player.movingfor(value * 15)
+				 and ni.player.movingfor(value * 25)
 				 and not ni.player.buff(ghostwolf) then
 					ni.spell.cast(ghostwolf)
 					return true;    
@@ -267,9 +261,7 @@ end,
 
 ["Lightning Bolt"] = function()
 	local blitz = ni.unit.enemiesinrange("target", 7)
-	local value, enabled = GetSetting("lightningbolt")
-		if enabled
-		and ni.spell.available(lightningbolt)
+		if ni.spell.available(lightningbolt)
 		and ni.unit.buffstacks("player", 53817) == 5
 		and #blitz <= 2
             then ni.spell.cast(lightningbolt, "target")
