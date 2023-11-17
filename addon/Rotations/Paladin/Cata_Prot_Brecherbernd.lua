@@ -88,12 +88,11 @@ local abilities = {
 	end,
 
 	["ShieldOfTheRighteous"] = function()
-		if ni.spell.available(spells.ShieldOfTheRighteous)
-			and Cache.holypower >= 3 then
-			ni.spell.cast(spells.ShieldOfTheRighteous, "target");
-			return true;
-		end
-	end,
+			if ni.spell.available(spells.ShieldOfTheRighteous) and Cache.holypower >= 3 then
+				ni.spell.cast(spells.ShieldOfTheRighteous, "target");
+				return true;
+			end
+		end,
 
 	["HammerOfWrath"] = function()
 		if ni.spell.available(spells.HammerOfWrath) then
