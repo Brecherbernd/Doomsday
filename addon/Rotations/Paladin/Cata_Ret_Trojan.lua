@@ -793,16 +793,14 @@ then
 		end,
 
 		["Divine Storm"] = function()
-			local bang = ni.unit.enemiesinrange(player, 7)
+			if Cache.AOE then
 				if ni.spell.available(spells.DivineStorm.id) then
 					if Cache.PlayerCombat
 							and ni.unit.inmelee("player", "target")
 							and not Cache.PlayerControled
-							and Cache.holypower < 3 
-							and bang >= 4 then
-							ni.spell.cast(spells.DivineStorm.name)
-							return true
-						end
+							and Cache.holypower < 3 then
+						ni.spell.cast(spells.DivineStorm.name)
+						return true
 					end
 				end
 			end
@@ -830,13 +828,12 @@ then
 		end,
 
 		["CrusaderStrike"] = function()
-			local bang = ni.unit.enemiesinrange(player, 7)	
-			if ni.spell.available(spells.CrusaderStrike.id) then
+			if not Cache.AOE then
+				if ni.spell.available(spells.CrusaderStrike.id) then
 					if ni.spell.valid("target", spells.CrusaderStrike.id)
 							and Cache.holypower < 3
 							and not Cache.PlayerControled
-							and Cache.PlayerCombat
-							and bang = <= 3 then
+							and Cache.PlayerCombat then
 						ni.spell.cast(spells.CrusaderStrike.name, "target")
 						return true
 					end
