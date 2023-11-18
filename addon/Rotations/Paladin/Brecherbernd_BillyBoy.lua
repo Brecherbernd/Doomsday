@@ -12,7 +12,12 @@ local spells = {
 	SealOfRighteousness =  GetSpellInfo(20154),
 	SealOfTruth = GetSpellInfo(31801),
 	BlessingOfKings	= GetSpellInfo(20217),
-	BlessingOfMight	= GetSpellInfo(19740) 
+	BlessingOfMight	= GetSpellInfo(19740),
+	ConcentrationAura = GetSpellInfo(19746),
+	DevotionAura = GetSpellInfo(465),
+	ResistanceAura = GetSpellInfo(19891),
+	CrusaderAura = GetSpellInfo(32223),
+	RetributionAura = GetSpellInfo(7294)
 }
 
 local items = {
@@ -88,10 +93,11 @@ local function GetSeal()
 end
 
 local queue = {
-	"Pause",
-	"Auto Target",
+	"Aura",
 	"Seal",
 	"Blessings",
+	"Pause",
+	"Auto Target",
 	"ShieldOfTheRighteous",
 	"HammerOfRighteous",
 	"AvengersShield",
@@ -153,6 +159,20 @@ local abilities = {
 		end
 	end,
 
+	["Aura"] = function()
+		if not IsMounted() then
+			if not ni.player.buff(spells.DevotionAura) then
+				ni.spell.cast(spells.DevotionAura)
+				return true
+			end
+		else
+			if not ni.player.buff(spells.CrusaderAura) then
+				ni.spell.cast(spells.CrusaderAura)
+				return true
+			end
+		end
+	end,
+
 	["HammerOfRighteous"] = function()
 		if ni.spell.available(spells.HammerOfTheRighteous) then
 			ni.spell.cast(spells.HammerOfTheRighteous, "target")
@@ -176,9 +196,10 @@ local abilities = {
 	end,
 
 	["Consecration"] = function()
-		if ni.spell.available(spells.Consecration) then
-			ni.spell.cast(spells.Consecration);
-			return true;
+		if ni.spell.available(spells.Consecration) 
+			and not ni.unit.ismoving("player") then
+			ni.spell.cast(spells.Consecration)
+			return true
 		end
 	end,
 
