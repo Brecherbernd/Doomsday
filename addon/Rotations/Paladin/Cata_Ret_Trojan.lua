@@ -99,7 +99,7 @@ then
 		{
 			type = "title",
 			text =
-			">                          Paladin - Ret PvE by |cFFFF0000Trojan                          |cFFFFFFFF<"
+			">                          Paladin - Ret PvE by |cFFFF0000Trojan | Edit by Brecherbernd                   |cFFFFFFFF<"
 		},
 		{ type = "separator" },
 		{ type = "page",     number = 1,             text = "|cffFFFF00Main Settings" },
@@ -592,8 +592,8 @@ then
 		["Seal"] = function()
 			local s = menus["Seal"]
 			if Cache.AOE then
-				if ni.spell.available(spells.SealofRighteousness.id) and not ni.player.buff(spells.SealofRighteousness.id) then
-					ni.spell.cast(spells.SealofRighteousness.name)
+				if ni.spell.available(spells.SealofTruth.id) and not ni.player.buff(spells.SealofTruth.id) then
+					ni.spell.cast(spells.SealofTruth.id)
 					return true
 				end
 			else
