@@ -126,15 +126,17 @@ local queue = {
 	"Aura",
 	"Seal",
 	"Blessings",
-	"righteous fury",
+	"RighteousFury",
 	"Pause",
 	"Auto Target",
-	"DefensiveCooldowns",
-	"Lay on Hands",
-	"Flash of Light",
-	"Word of Glory",
-	"Healthstone",
-	"GoAK",
+--	"Ardent Defender",
+--	"Divine Protection",
+--	"LayonHands",
+--	"FlashofLight",
+--	"WordofGlory",
+--	"Healthstone",
+--	"GoAK",
+--	"SacredShield",
 	"ShieldOfTheRighteous",
 	"HammerOfRighteous",
 	"AvengersShield",
@@ -169,33 +171,41 @@ local abilities = {
 		end
 	end,
 
-	["Defensive Cooldowns"] = function()
-		local hp = ni.player.hp();
-		local ardval, arden = GetSetting("ArdentDefender");
-		if arden
-		 and available(spells.ArdentDefender.id)
-		 and hp <= ardval then
-			ni.spell.cast(spells.ArdentDefender.name, "player");
-			return true;
+	["Ardent Defender"] = function()
+		local value, enabled = GetSetting("ArdentDefender")
+		if enabled 
+			and available(spells.ArdentDefender.id) 
+			and ni.player.hp() <= value then
+			ni.spell.cast(spells.ArdentDefender.name, "player")
+			return true
 		end
-		local dpval, dpen = GetSetting("DivineProtection");
-		if dpen
-		 and available(spells.DivineProtection.id)
-		 and hp <= dpval then
-			ni.spell.cast(spells.DivineProtection.name, "player");
-			return true;
+	end,
+	
+	["Divine Protection"] = function()
+		local value, enabled = GetSetting("DivineProtection")
+		if enabled 
+			and available(spells.DivineProtection)
+			and ni.unit.hp("player") <= value then
+			ni.spell.cast(spells.DivineProtection)
+			return true
 		end
-		local goakval, goaken = GetSetting("GoAK");
+	end,
+
+	["GoAK"] = function()
+	local goaken = GetSetting("GoAK");
 		if goaken
-		 and available(spells.GuardianOfAncientKings.id)
-		 and hp <= goakval then
+	 	and available(spells.GuardianOfAncientKings.id)
+	 	and ni.player.hp <= goaken then
 			ni.spell.cast(spells.GuardianOfAncientKings.name, "player");
 			return true;
 		end
-		local sacreds, sacreds = GetSetting("SacredShield");
+	end,
+
+	["SacredShield"] = function()
+	local sacreds = GetSetting("SacredShield");
 		if sacreds
-		 and available(spells.SacredShield)
-		 and hp <= sacreds then
+	 	and available(spells.SacredShield)
+	 	and ni.player.hp <= sacreds then
 			ni.spell.cast(spells.SacredShield, "player");
 			return true;
 		end
@@ -252,14 +262,16 @@ local abilities = {
 	end,
 
 	["HammerOfRighteous"] = function()
-		if ni.spell.available(spells.HammerOfTheRighteous) then
+		if ni.spell.available(spells.HammerOfTheRighteous)
+			and ni.unit.enemiesinrange("player", 3) then
 			ni.spell.cast(spells.HammerOfTheRighteous, "target")
 			return true
 		end
 	end,
 
 	["ShieldOfTheRighteous"] = function()
-		if ni.spell.available(spells.ShieldOfTheRighteous) and ni.player.powerraw("holy") >= 3 then
+		if ni.spell.available(spells.ShieldOfTheRighteous) 
+				and ni.player.powerraw("holy") >= 3 then
 				ni.spell.cast(spells.ShieldOfTheRighteous, "target");
 				return true;
 			end
