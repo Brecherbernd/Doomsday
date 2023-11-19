@@ -8,19 +8,31 @@ local spells = {
 	Consecration = GetSpellInfo(26573),
 	HolyWrath = GetSpellInfo(2812),
 	HammerOfTheRighteous = GetSpellInfo(53595),
-	SealOfInsight =	GetSpellInfo(20165),
-	SealOfRighteousness =  GetSpellInfo(20154),
+	SealOfInsight = GetSpellInfo(20165),
+	SealOfRighteousness = GetSpellInfo(20154),
 	SealOfTruth = GetSpellInfo(31801),
-	BlessingOfKings	= GetSpellInfo(20217),
-	BlessingOfMight	= GetSpellInfo(19740),
+	BlessingOfKings = GetSpellInfo(20217),
+	BlessingOfMight = GetSpellInfo(19740),
 	ConcentrationAura = GetSpellInfo(19746),
 	DevotionAura = GetSpellInfo(465),
 	ResistanceAura = GetSpellInfo(19891),
 	CrusaderAura = GetSpellInfo(32223),
-	RetributionAura = GetSpellInfo(7294)
+	RetributionAura = GetSpellInfo(7294),
 	DivineProtection = GetSpellInfo(498),
 	GuardianofAncientKings = GetSpellInfo(86150),
 	SacredShield = GetSpellInfo(20925),
+	WordOfGlory = GetSpellInfo(85673),
+	LayonHands = GetSpellInfo(633),
+	HolyPrism = GetSpellInfo(114165),
+	FlashOfLight = GetSpellInfo(19750),
+	HandOfSacrifice = GetSpellInfo(6940),
+	HandOfSalvation = GetSpellInfo(1038),
+	HandOfProtection = GetSpellInfo(1022),
+	HandOfFreedom = GetSpellInfo(1044),
+	Healthstone = GetSpellInfo(5512),
+	ArdentDefender = GetSpellInfo(31850),
+	Rebuke = GetSpellInfo(96231),
+	RighteousFury = GetSpellInfo(25780)
 }
 
 local items = {
@@ -47,22 +59,20 @@ local items = {
 	{ type = "page", number = 2, text = "Healing Options" },
 	{ type = "separator" },
 	{ type = "entry", text = "Active Healing", enabled = true, key = "GroupHeal" },
-	{ type = "entry", text = "Eternal Flame (Self)", enabled = true, value = 70, key = "EternalFlame" },
 	{ type = "entry", text = "Word of Glory", enabled = true, value = 60, key = "WoG" },
 	{ type = "entry", text = "Lay on Hands", enabled = true, value = 17, key = "LoH" },
 	{ type = "entry", text = "Holy Prism", enabled = true, value = 32, key = "HolyPrism" },
 	{ type = "entry", text = "Flash of Light", enabled = true, value = 70, key = "FoL" },
 	{ type = "entry", text = "Healthstone", enabled = true, value = 25, key = "Healthstone" },
-	{ type = "entry", text = "Selfless Healer", enabled = true, value = 60, key = "SelflessHealer" },
-	{ type = "page", number = 3, text = "Utility Options" },
+	{ type = "page", number = 3, text = "Hands Options" },
 	{ type = "separator" },
 	{ type = "entry", text = "Hand of Sacrifice", enabled = true, value = 35, key = "HandOfSac" },
 	{ type = "entry", text = "Hand of Salvation", enabled = true, value = 80, key = "HandofSalv" },
 	{ type = "entry", text = "Hand of Protection", enabled = true, value = 45, key = "HandOfProt" },
 	{ type = "entry", text = "Hand of Freedom (Self)", enabled = false, key = "HandOfFreedom" },
-	{ type = "entry", text = "Ardent Defender", enabled = true, value = 12, key = "ArdentDefender" },
-	{ type = "page", number = 4, text = "Utility Options #2" },
+	{ type = "page", number = 4, text = "Defensive Options" },
 	{ type = "separator" },
+	{ type = "entry", text = "Ardent Defender", enabled = true, value = 12, key = "ArdentDefender" },
 	{ type = "entry", text = "Divine Protection", enabled = false, value = 45, key = "DivineProtection" },
 	{ type = "entry", text = "Guardian of Ancient Kings", enabled = false, value = 30, key = "GoAK" },
 	{ type = "entry", text = "Sacred Shield", enabled = false, value = 100, key = "SacredShield" },
@@ -116,15 +126,23 @@ local queue = {
 	"Aura",
 	"Seal",
 	"Blessings",
+	"righteous fury",
 	"Pause",
 	"Auto Target",
+	"DefensiveCooldowns",
+	"Lay on Hands",
+	"Flash of Light",
+	"Word of Glory",
+	"Healthstone",
+	"GoAK",
 	"ShieldOfTheRighteous",
 	"HammerOfRighteous",
 	"AvengersShield",
 	"HammerofWrath",
 	"Judgement",
 	"Consecration",
-	"HolyWrath"
+	"HolyWrath",
+	"Holy Prism"
 }
 
 local abilities = {
@@ -148,6 +166,38 @@ local abilities = {
 		 and not UnitCanAttack("player", "target")) 
 		 or not ni.unit.exists("target")) then
 			ni.player.runtext("/targetenemy")
+		end
+	end,
+
+	["Defensive Cooldowns"] = function()
+		local hp = ni.player.hp();
+		local ardval, arden = GetSetting("ArdentDefender");
+		if arden
+		 and available(spells.ArdentDefender.id)
+		 and hp <= ardval then
+			ni.spell.cast(spells.ArdentDefender.name, "player");
+			return true;
+		end
+		local dpval, dpen = GetSetting("DivineProtection");
+		if dpen
+		 and available(spells.DivineProtection.id)
+		 and hp <= dpval then
+			ni.spell.cast(spells.DivineProtection.name, "player");
+			return true;
+		end
+		local goakval, goaken = GetSetting("GoAK");
+		if goaken
+		 and available(spells.GuardianOfAncientKings.id)
+		 and hp <= goakval then
+			ni.spell.cast(spells.GuardianOfAncientKings.name, "player");
+			return true;
+		end
+		local sacreds, sacreds = GetSetting("SacredShield");
+		if sacreds
+		 and available(spells.SacredShield)
+		 and hp <= sacreds then
+			ni.spell.cast(spells.SacredShield, "player");
+			return true;
 		end
 	end,
 
@@ -176,6 +226,14 @@ local abilities = {
 				ni.spell.cast(spells.BlessingOfMight)
 				return true
 			end
+		end
+	end,
+
+	["RighteousFury"] = function()
+	if ni.spell.available(spells.RighteousFury) 
+			and not ni.player.buff(spells.RighteousFury) then
+			ni.spell.cast(spells.RighteousFury, "player")
+			return true
 		end
 	end,
 
