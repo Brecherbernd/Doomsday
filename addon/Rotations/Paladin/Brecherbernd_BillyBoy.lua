@@ -1,4 +1,4 @@
----Credits to Scizzydo for the base of this rotation
+---Credits to Scizzydo for the base of this rotation and Trojan for answering my questions
 local spells = {
 	AvengersShield = GetSpellInfo(31935),
 	CrusaderStrike = GetSpellInfo(35395),
