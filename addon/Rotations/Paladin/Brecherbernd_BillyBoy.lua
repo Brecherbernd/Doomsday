@@ -18,6 +18,9 @@ local spells = {
 	ResistanceAura = GetSpellInfo(19891),
 	CrusaderAura = GetSpellInfo(32223),
 	RetributionAura = GetSpellInfo(7294)
+	DivineProtection = GetSpellInfo(498),
+	GuardianofAncientKings = GetSpellInfo(86150),
+	SacredShield = GetSpellInfo(20925),
 }
 
 local items = {
